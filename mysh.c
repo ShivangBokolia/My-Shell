@@ -29,6 +29,31 @@ int execution(int argc, char *argv[]){
 }
 
 
+int executionVerbose(int argc, char *argv[]){
+        pid_t pid, wpid;
+        int status;
+        pid = fork();
+        if(pid == 0){
+                if(execvp(argv[0], argv) == -1){
+                        perror(argv[0]);
+                        fprintf(stderr, "command status: %d\n", argc);
+                }
+                exit(EXIT_FAILURE);
+        }
+        else if(pid < 0){
+                perror("fork failed");
+        }
+        else{
+		printf("\twait for pid %d: %s\n", pid, argv[0]);
+                printf("\texecvp: %s\n", argv[0]);
+                do{
+                        wpid = waitpid(pid, &status, WUNTRACED);
+                }while (!WIFEXITED(status) && !WIFSIGNALED(status));
+        }
+        return 1;
+}
+
+
 void verbose_print(char *args[]){
 	int len = 0;
 	printf("\tcommand: ");
@@ -90,23 +115,15 @@ char** get_tokens(char* line){
 	tokens[position] = NULL;
 	return tokens;
 }
-/*
-int launch(char **args){
-        if(strcmp(args[0], "help") == 0){
-                return help(args);
-        }
-        return execution(args);
-}
-*/
 
 
-void loop(int verbose, int his_num){
+void loop(int c, int verbose, int his_num){
 	char *buffer, *copy;
 	int status;
 	char **args;
 	char **history = malloc(sizeof(char*) * LSH_TOK_BUFSIZE);
 	int position = 0;
-	int c = 1;
+	//int c = 1;
 	while(status != -1){
 		printf("mysh[%d]> ", c);
 		buffer = read_input();
@@ -124,11 +141,28 @@ void loop(int verbose, int his_num){
 			}else{
 				status = displayHistory(c-his_num, history);
 			}
-		}else if(strcmp(args[0], "quit") == 0){
+		}
+		else if(strcmp(args[0], "quit") == 0){
 			status = -1;
 			exit(0);
-		}else{
-			status = execution(c, args);
+		}
+		else if(strcmp(args[0], "verbose") == 0){
+			if(strcmp(args[1], "on") == 0){
+				loop(c+1, 1, his_num);
+			}else if(strcmp(args[1], "off") == 0){
+				loop(c+1, 0, his_num);
+			}else if(args[1] == NULL){
+				perror("usage: verbose on | off");
+			}else{
+				perror("usage: verbose on | off");
+			}
+		}
+		else{
+			if(verbose == 0){
+				status = execution(c, args);
+			}else if(verbose == 1){
+				status = executionVerbose(c, args);
+			}
 		}
 		c++;
 		position++;
@@ -138,11 +172,11 @@ void loop(int verbose, int his_num){
 
 int main(int argc, char *argv[]){
         if(argc == 1){
-		loop(0, 10);
+		loop(1, 0, 10);
 	}else if(argc == 2){
-		loop(1, 10);
+		loop(1, 1, 10);
 	}else if(argc == 3){
-		loop(0, atoi(argv[2]));
+		loop(1, 0, atoi(argv[2]));
 	}else if(argc == 4){
 		//make complete with verbose and history
 	}
