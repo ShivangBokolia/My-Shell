@@ -68,7 +68,6 @@ void verbose_print(char *args[]){
 	}
 }
 
-
 int help(int argc, char *argv[]){
 	(void)argc;
 	(void)argv;
@@ -117,13 +116,27 @@ char** get_tokens(char* line){
 }
 
 
-void loop(int c, int verbose, int his_num){
+void loop(int argc, char *argv[]){
 	char *buffer, *copy;
-	int status;
+	int status, verbose, his_num;
 	char **args;
+	char *bangnum = malloc(sizeof(char) * LSH_TOK_BUFSIZE);
 	char **history = malloc(sizeof(char*) * LSH_TOK_BUFSIZE);
 	int position = 0;
-	//int c = 1;
+	int c = 1;
+	if(argc == 1){
+		verbose = 0;
+	}
+	else if(argc == 2){
+		verbose = 1;
+	}
+	else if(argc == 3){
+		his_num = atoi(argv[2]);
+	}
+	else if(argc == 4){
+		verbose = 1;
+		his_num = atoi(argv[3]);
+	}
 	while(status != -1){
 		printf("mysh[%d]> ", c);
 		buffer = read_input();
@@ -148,13 +161,20 @@ void loop(int c, int verbose, int his_num){
 		}
 		else if(strcmp(args[0], "verbose") == 0){
 			if(strcmp(args[1], "on") == 0){
-				loop(c+1, 1, his_num);
+				verbose = 1;
 			}else if(strcmp(args[1], "off") == 0){
-				loop(c+1, 0, his_num);
+				verbose = 0;
 			}else if(args[1] == NULL){
 				perror("usage: verbose on | off");
 			}else{
 				perror("usage: verbose on | off");
+			}
+		}
+		else if(args[0][0] == '!'){
+			
+			if(strcmp(history[args[0][1]-1] , "help") == 0){
+				printf("%s\n", history[args[0][1]]);
+//			status = bang((args[0][1] - '0'), history);
 			}
 		}
 		else{
@@ -171,16 +191,18 @@ void loop(int c, int verbose, int his_num){
 
 
 int main(int argc, char *argv[]){
-        if(argc == 1){
-		loop(1, 0, 10);
+        
+		loop(argc, argv);
+		/*
 	}else if(argc == 2){
-		loop(1, 1, 10);
+		loop(a);
 	}else if(argc == 3){
 		loop(1, 0, atoi(argv[2]));
 	}else if(argc == 4){
 		//make complete with verbose and history
 	}
         return EXIT_SUCCESS;
+	*/
 }
 
 
