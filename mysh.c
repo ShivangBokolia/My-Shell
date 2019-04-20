@@ -120,12 +120,13 @@ void loop(int argc, char *argv[]){
 	char *buffer, *copy;
 	int status, verbose, his_num;
 	char **args;
-	char *bangnum = malloc(sizeof(char) * LSH_TOK_BUFSIZE);
+	char *bangnum = malloc(sizeof(char) * 4);
 	char **history = malloc(sizeof(char*) * LSH_TOK_BUFSIZE);
 	int position = 0;
 	int c = 1;
 	if(argc == 1){
 		verbose = 0;
+		his_num = 10;
 	}
 	else if(argc == 2){
 		verbose = 1;
@@ -149,8 +150,8 @@ void loop(int argc, char *argv[]){
 			status = help(0, args);
 		}
 		else if(strcmp(args[0], "history") == 0){
-			if(c <= his_num){
-				status = displayHistory(0, history);
+			if(c < his_num){
+				status = displayHistory(0,history);
 			}else{
 				status = displayHistory(c-his_num, history);
 			}
@@ -171,11 +172,46 @@ void loop(int argc, char *argv[]){
 			}
 		}
 		else if(args[0][0] == '!'){
-			
-			if(strcmp(history[args[0][1]-1] , "help") == 0){
-				printf("%s\n", history[args[0][1]]);
-//			status = bang((args[0][1] - '0'), history);
+			char* command = malloc(sizeof(char) * 64);
+			strcpy(command, history[(args[0][1] - '0') - 1]);
+			args = get_tokens(command);
+			if(strcmp(args[0], "help") == 0){
+                        	status = help(0, args);
+	                }
+	                else if(strcmp(args[0], "history") == 0){
+	                        if(c <= his_num){
+	                                status = displayHistory(0, history);
+	                        }else{
+	                                status = displayHistory(c-his_num, history);
+	                        }
+	                }
+	                else if(strcmp(args[0], "quit") == 0){
+	                        status = -1;
+	                        exit(0);
+	                }
+	                else if(strcmp(args[0], "verbose") == 0){
+	                        if(strcmp(args[1], "on") == 0){
+	                                verbose = 1;
+	                        }else if(strcmp(args[1], "off") == 0){
+	                                verbose = 0;
+	                        }else if(args[1] == NULL){
+	                                perror("usage: verbose on | off");
+	                        }else{
+	                                perror("usage: verbose on | off");
+	                        }
+	                }
+			else{
+				if(verbose == 0){
+                                status = execution(c, args);
+                     		}else if(verbose == 1){
+                                status = executionVerbose(c, args);
+                        	}
 			}
+
+//			if(strcmp(history[args[0][1]-1] , "help") == 0){
+//				printf("%s\n", history[args[0][1]]);
+//			status = bang((args[0][1] - '0'), history);
+//			}
 		}
 		else{
 			if(verbose == 0){
