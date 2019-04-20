@@ -7,7 +7,7 @@
 #define LSH_TOK_DELIM " \t\r\n\a"
 
 int execution(int argc, char *argv[]){
-        pid_t pid, wpid;
+        pid_t pid;
         int status;
         pid = fork();
         if(pid == 0){
@@ -22,7 +22,7 @@ int execution(int argc, char *argv[]){
 	}
 	else{
                 do{
-                        wpid = waitpid(pid, &status, WUNTRACED);
+                        waitpid(pid, &status, WUNTRACED);
                 }while (!WIFEXITED(status) && !WIFSIGNALED(status));
         }
         return 1; 
@@ -117,10 +117,9 @@ char** get_tokens(char* line){
 
 
 void loop(int argc, char *argv[]){
-	char *buffer, *copy;
+	char *buffer;
 	int status, verbose, his_num;
 	char **args;
-	char *bangnum = malloc(sizeof(char) * 4);
 	char **history = malloc(sizeof(char*) * LSH_TOK_BUFSIZE);
 	int position = 0;
 	int c = 1;
@@ -141,87 +140,92 @@ void loop(int argc, char *argv[]){
 	while(status != -1){
 		printf("mysh[%d]> ", c);
 		buffer = read_input();
-		history[position] = add_history(strdup(buffer));
-		args = get_tokens(buffer);
-		if(verbose == 1){
-			verbose_print(args);
-		}
-		if(strcmp(args[0], "help") == 0){
-			status = help(0, args);
-		}
-		else if(strcmp(args[0], "history") == 0){
-			if(c < his_num){
-				status = displayHistory(0,history);
-			}else{
-				status = displayHistory(c-his_num, history);
+		if(buffer[0] != '\n'){
+			history[position] = add_history(strdup(buffer));
+			args = get_tokens(buffer);
+			if(verbose == 1){
+				verbose_print(args);
 			}
-		}
-		else if(strcmp(args[0], "quit") == 0){
-			status = -1;
-			exit(0);
-		}
-		else if(strcmp(args[0], "verbose") == 0){
-			if(strcmp(args[1], "on") == 0){
-				verbose = 1;
-			}else if(strcmp(args[1], "off") == 0){
-				verbose = 0;
-			}else if(args[1] == NULL){
-				perror("usage: verbose on | off");
-			}else{
-				perror("usage: verbose on | off");
-			}
-		}
-		else if(args[0][0] == '!'){
-			char* command = malloc(sizeof(char) * 64);
-			strcpy(command, history[(args[0][1] - '0') - 1]);
-			args = get_tokens(command);
 			if(strcmp(args[0], "help") == 0){
-                        	status = help(0, args);
-	                }
-	                else if(strcmp(args[0], "history") == 0){
-	                        if(c <= his_num){
-	                                status = displayHistory(0, history);
-	                        }else{
-	                                status = displayHistory(c-his_num, history);
-	                        }
-	                }
-	                else if(strcmp(args[0], "quit") == 0){
-	                        status = -1;
-	                        exit(0);
-	                }
-	                else if(strcmp(args[0], "verbose") == 0){
-	                        if(strcmp(args[1], "on") == 0){
-	                                verbose = 1;
-	                        }else if(strcmp(args[1], "off") == 0){
-	                                verbose = 0;
-	                        }else if(args[1] == NULL){
-	                                perror("usage: verbose on | off");
-	                        }else{
-	                                perror("usage: verbose on | off");
-	                        }
-	                }
+				status = help(0, args);
+				c++;
+				position++;
+			}
+			else if(strcmp(args[0], "history") == 0){
+				if(c < his_num){
+					status = displayHistory(0,history);
+				}else{
+					status = displayHistory(c-his_num, history);
+				}
+				c++;
+				position++;
+			}
+			else if(strcmp(args[0], "quit") == 0){
+				status = -1;
+				exit(0);
+			}
+			else if(strcmp(args[0], "verbose") == 0){
+				if(strcmp(args[1], "on") == 0){
+					verbose = 1;
+				}else if(strcmp(args[1], "off") == 0){
+					verbose = 0;
+				}else if(args[1] == NULL){
+					perror("usage: verbose on | off");
+				}else{
+					perror("usage: verbose on | off");
+				}
+				c++;
+				position++;
+			}
+			else if(args[0][0] == '!'){
+				char* command = malloc(sizeof(char) * 64);
+				strcpy(command, history[(args[0][1] - '0') - 1]);
+				args = get_tokens(command);
+				if(strcmp(args[0], "help") == 0){
+	                        	status = help(0, args);
+		                }
+		                else if(strcmp(args[0], "history") == 0){
+		                        if(c <= his_num){
+		                                status = displayHistory(0, history);
+		                        }else{
+		                                status = displayHistory(c-his_num, history);
+		                        }
+		                }
+		                else if(strcmp(args[0], "quit") == 0){
+		                        status = -1;
+		                        exit(0);
+		                }
+		                else if(strcmp(args[0], "verbose") == 0){
+		                        if(strcmp(args[1], "on") == 0){
+		                                verbose = 1;
+		                        }else if(strcmp(args[1], "off") == 0){
+		                                verbose = 0;
+		                        }else if(args[1] == NULL){
+		                                perror("usage: verbose on | off");
+		                        }else{
+		                                perror("usage: verbose on | off");
+		                        }
+		                }
+				else{
+					if(verbose == 0){
+	                                	status = execution(c, args);
+	                     		}else if(verbose == 1){
+	                                	status = executionVerbose(c, args);
+	                        	}
+				}
+				c++;
+				position++;
+			}
 			else{
 				if(verbose == 0){
-                                status = execution(c, args);
-                     		}else if(verbose == 1){
-                                status = executionVerbose(c, args);
-                        	}
-			}
-
-//			if(strcmp(history[args[0][1]-1] , "help") == 0){
-//				printf("%s\n", history[args[0][1]]);
-//			status = bang((args[0][1] - '0'), history);
-//			}
-		}
-		else{
-			if(verbose == 0){
-				status = execution(c, args);
-			}else if(verbose == 1){
-				status = executionVerbose(c, args);
+					status = execution(c, args);
+				}else if(verbose == 1){
+					status = executionVerbose(c, args);
+				}
+				c++;
+				position++;
 			}
 		}
-		c++;
-		position++;
 	}
 }
 
