@@ -118,6 +118,7 @@ char** get_tokens(char* line){
 
 void loop(int argc, char *argv[]){
 	char *buffer;
+	size_t bufsize = 0;
 	int status, verbose, his_num;
 	char **args;
 	char *bangNum = malloc(sizeof(char) * LSH_TOK_BUFSIZE);
@@ -130,8 +131,10 @@ void loop(int argc, char *argv[]){
 	}
 	else if(argc == 2){
 		verbose = 1;
+		his_num = 10;
 	}
 	else if(argc == 3){
+		verbose = 0;
 		his_num = atoi(argv[2]);
 	}
 	else if(argc == 4){
@@ -139,9 +142,12 @@ void loop(int argc, char *argv[]){
 		his_num = atoi(argv[3]);
 	}
 	while(status != -1){
+		int end = -1;
 		printf("mysh[%d]> ", c);
-		buffer = read_input();
-		if(buffer[0] != '\n'){
+	//	buffer = read_input();
+		end = getline(&buffer, &bufsize, stdin);
+	//	if(buffer[0] != '\n'){
+		if(end != 1){
 			history[position] = add_history(strdup(buffer));
 			args = get_tokens(buffer);
 			if(verbose == 1){
@@ -180,10 +186,10 @@ void loop(int argc, char *argv[]){
 			}
 			else if(args[0][0] == '!'){
 				char* command = malloc(sizeof(char) * 64);
-			//	char* bang = malloc(sizeof(char) * 64);
-			//	bang = strdup(command);
-			//	bangNum = strtok(bang, "!");
-				strcpy(command, history[(args[0][1] - '0') - 1]);
+				char* bang = malloc(sizeof(char) * 64);
+				bang = strdup(args[0]);
+				bangNum = strtok(bang, "!");
+				strcpy(command, history[atoi(bangNum) - 1]);
 				args = get_tokens(command);
 				if(strcmp(args[0], "help") == 0){
 	                        	status = help(0, args);
