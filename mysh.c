@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+#define _DEFAULT_SOURCE
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -30,7 +32,7 @@ int execution(int argc, char *argv[]){
 
 
 int executionVerbose(int argc, char *argv[]){
-        pid_t pid, wpid;
+        pid_t pid;
         int status;
         pid = fork();
         if(pid == 0){
@@ -47,7 +49,7 @@ int executionVerbose(int argc, char *argv[]){
 		printf("\twait for pid %d: %s\n", pid, argv[0]);
                 printf("\texecvp: %s\n", argv[0]);
                 do{
-                        wpid = waitpid(pid, &status, WUNTRACED);
+                        waitpid(pid, &status, WUNTRACED);
                 }while (!WIFEXITED(status) && !WIFSIGNALED(status));
         }
         return 1;
@@ -89,14 +91,14 @@ int displayHistory(int argc, char *argv[]){
 char* add_history(char* line){
 	return strtok(line, "\n");
 }
-
+/*
 char* read_input(void){
 	char *command;
 	size_t bufsize = 0;
 	getline(&command, &bufsize, stdin);
 	return command;
 }
-
+*/
 char** get_tokens(char* line){
 	int bufsize = LSH_TOK_BUFSIZE;
         int position = 0;
