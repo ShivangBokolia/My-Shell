@@ -120,6 +120,7 @@ void loop(int argc, char *argv[]){
 	char *buffer;
 	int status, verbose, his_num;
 	char **args;
+	char *bangNum = malloc(sizeof(char) * LSH_TOK_BUFSIZE);
 	char **history = malloc(sizeof(char*) * LSH_TOK_BUFSIZE);
 	int position = 0;
 	int c = 1;
@@ -179,6 +180,9 @@ void loop(int argc, char *argv[]){
 			}
 			else if(args[0][0] == '!'){
 				char* command = malloc(sizeof(char) * 64);
+			//	char* bang = malloc(sizeof(char) * 64);
+			//	bang = strdup(command);
+			//	bangNum = strtok(bang, "!");
 				strcpy(command, history[(args[0][1] - '0') - 1]);
 				args = get_tokens(command);
 				if(strcmp(args[0], "help") == 0){
@@ -233,44 +237,5 @@ void loop(int argc, char *argv[]){
 int main(int argc, char *argv[]){
         
 		loop(argc, argv);
-		/*
-	}else if(argc == 2){
-		loop(a);
-	}else if(argc == 3){
-		loop(1, 0, atoi(argv[2]));
-	}else if(argc == 4){
-		//make complete with verbose and history
-	}
-        return EXIT_SUCCESS;
-	*/
+		
 }
-
-
-
-
-/*
-int bang(int argc, char *args[]){
-        int status;
-        if(strcmp(args[argc-1], "help") == 0){
-                status = help(args);
-        }
-        else if(strcmp(args[argc-1], "history") == 0){
-                status = dis_history(argc, args);
-        }
-        else if(args[argc-1][0] == '!'){
-                status = bang(args[argc-1][1], args);
-                printf("Banged\n");
-        }else{
-                status = execution(args);
-        }
-//      if(status == 0){
-  //            fprintf(stderr, "%s: No such file or directory\n", args[0]);
-    //            fprintf(stderr, "command status: %d\n", argc);
-      //        }
-        return status;
-}
-*/
-
-
-
-
