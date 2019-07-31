@@ -5,5 +5,5 @@ Built an interactive shell program that spawns sub-processes, implements command
 </p>
 
 <p>
-The main file you need to access in order to access the code is myshell.c.
+The main file you need to access in order to access the code is mysh.c.
 </p>
