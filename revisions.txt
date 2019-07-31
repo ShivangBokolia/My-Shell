@@ -1,0 +1,59 @@
+commit 133d81f23e5b1ae36c19c2382b43d9d4a03680ce
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Sun Apr 21 03:06:31 2019 -0400
+
+    all commenting done.
+
+commit 3184f4c94009d913e4ea301a95f2bab4411081be
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Sun Apr 21 01:14:21 2019 -0400
+
+    added few more changes
+
+commit 86b8a8361fb4453f3b289a4ac70342071385c9f1
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Sun Apr 21 01:03:48 2019 -0400
+
+    trying test cases
+
+commit 20f148cacb4fef72bff9f4dfb886050ded079086
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Sat Apr 20 20:19:25 2019 -0400
+
+    Working it to the end
+
+commit 2aee70e2f29222bdbfeb98c223d2ef16ffc9af5e
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Sat Apr 20 17:46:51 2019 -0400
+
+    done with the functionalitites
+
+commit 0e2bcc5b16e0f49225ffe1ad34bc41743c6776ff
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Sat Apr 20 16:17:15 2019 -0400
+
+    Somewhat done
+
+commit a2cef1ea13e937a9b3c8708391fc4417dade9b1e
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Fri Apr 19 20:49:01 2019 -0400
+
+    Verbose completed
+
+commit 847cc4c17da46baa48b67abedad2c0fd4ecc028f
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Fri Apr 19 18:19:47 2019 -0400
+
+    Functionalities are working. Verbose in process
+
+commit 6bb5998ca89d9a55b6adf34ef079bacf0ae80713
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Fri Apr 19 00:35:40 2019 -0400
+
+    added functionalities
+
+commit c048a5d7da29f62d790c6958ffe31db01bc380a3
+Author: Shivang  Bokolia <sb8392@cs.rit.edu>
+Date:   Thu Apr 18 18:52:47 2019 -0400
+
+    The first commit with basic work.
